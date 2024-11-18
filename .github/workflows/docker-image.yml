@@ -1,0 +1,32 @@
+name: Build and Push Docker Image
+on:
+  push:
+    paths:
+    - 'src/**'
+    - 'Dockerfile'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Read git revision for tagging
+      id: tag
+      run: echo "value=$(git describe --tags --always)" >> $GITHUB_OUTPUT
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: octaviorichter/grepr-hello:${{ steps.tag.outputs.value }}
