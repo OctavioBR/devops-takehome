@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: octaviorichter/grepr-hello
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  type: LoadBalancer
