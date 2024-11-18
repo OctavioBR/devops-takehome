@@ -1,7 +1,6 @@
 name: Build and Push Docker Image
 on:
-  push:
-    paths: [ 'src/**', 'Dockerfile' ]
+  push: # paths: [ 'src/**', 'Dockerfile' ]
 jobs:
   build:
     runs-on: ubuntu-latest
