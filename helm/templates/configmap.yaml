@@ -5,13 +5,4 @@ metadata:
   name: hello-world-config
 data:
   config.yml: |
-    ---
-    server:
-    type: simple
-    applicationContextPath: /
-    adminContextPath: /admin
-
-    content: Stranger
-
-    logging:
-    level: INFO
+    {{- .Values.config | nindent 4 }}
