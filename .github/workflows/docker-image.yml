@@ -53,7 +53,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Install kubectl
-      uses: actions-hub/kubectl@v1
+      uses: azure/setup-kubectl@v4
+      with:
+        version: 'v1.31.2'
 
     - name: Install Helm
       uses: azure/setup-helm@v4
