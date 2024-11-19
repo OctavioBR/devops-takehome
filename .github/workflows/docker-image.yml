@@ -62,7 +62,7 @@ jobs:
       uses: azure/setup-helm@v4
 
     - name: Update kubeconfig
-      run: aws eks update-kubeconfig --name $(aws eks list-clusters --query "clusters[?contains(@, 'green')]" --output text | head -n 1)
+      run: aws eks update-kubeconfig --name $(aws resourcegroupstaggingapi get-resources --tag-filters Key=stack,Values=dev --resource-type-filters eks:cluster --query "ResourceTagMappingList[*].ResourceARN" --output text | awk -F/ '{print $NF}') --alias green
 
     - name: Deploy Helm chart
       run: helm upgrade --namespace hello-world --install --create-namespace --set image.tag=${{ steps.tag.outputs.value }} devops-takehome ./helm
