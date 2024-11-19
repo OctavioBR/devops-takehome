@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  repository: octaviorichter/grepr-hello
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  type: LoadBalancer
+
+config: |
+  ---
+  server:
+    type: simple
+    applicationContextPath: /
+    adminContextPath: /admin
+
+  content: Stranger
+
+  logging:
+    level: INFO
