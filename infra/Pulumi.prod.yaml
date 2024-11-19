@@ -1,7 +1,7 @@
 config:
   aws:region: us-east-1
-  pulumi-eks:desiredClusterSize: "1"
-  pulumi-eks:eksNodeInstanceType: t3.small
-  pulumi-eks:maxClusterSize: "5"
-  pulumi-eks:minClusterSize: "1"
-  pulumi-eks:vpcNetworkCidr: 10.1.0.0/16
+  vpcNetworkCidr: 10.1.0.0/21
+  desiredClusterSize: "1"
+  eksNodeInstanceType: t3.small
+  maxClusterSize: "5"
+  minClusterSize: "1"

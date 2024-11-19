@@ -7,7 +7,15 @@ const stack = pulumi.getStack();
 
 const vpc = new awsx.ec2.Vpc(`vpc-${stack}`, {
   enableDnsHostnames: true,
+  numberOfAvailabilityZones: 2,
   cidrBlock: config.get("vpcNetworkCidr"),
+  subnetStrategy: awsx.ec2.SubnetAllocationStrategy.Auto,
+  subnetSpecs: [
+    { type: awsx.ec2.SubnetType.Public, cidrMask: 24 },
+    { type: awsx.ec2.SubnetType.Private, cidrMask: 24 },
+    { type: awsx.ec2.SubnetType.Unused, cidrMask: 24 },
+  ],
+  natGateways: { strategy: awsx.ec2.NatGatewayStrategy.Single },
 });
 
 const eksCluster = new eks.Cluster("green", {
