@@ -64,6 +64,10 @@ jobs:
     - name: Update kubeconfig
       run: aws eks update-kubeconfig --name $(aws resourcegroupstaggingapi get-resources --tag-filters Key=stack,Values=dev --resource-type-filters eks:cluster --query "ResourceTagMappingList[*].ResourceARN" --output text | awk -F/ '{print $NF}') --alias green
 
+    - name: Read git revision
+      id: tag
+      run: echo "value=$(git describe --tags --always)" >> $GITHUB_OUTPUT
+
     - name: Deploy Helm chart
       run: helm upgrade --namespace hello-world --install --create-namespace --set image.tag=${{ steps.tag.outputs.value }} devops-takehome ./helm
 
