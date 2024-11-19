@@ -9,4 +9,5 @@ When the deployment completes, Pulumi exports the following stack **output** val
 | `kubeconfig ` | The cluster’s kubeconfig file which you can use with `kubectl` to access and communicate with your clusters. |
 
 ## Stacks
-- **dev** → `us-east-1` aws region, in a `10.0.0.0/22` CIDR VPC
+- **dev** → `us-east-1` aws region, in a `10.0.0.0/21` CIDR VPC
+- **prod** → `us-east-1` aws region, in a `10.1.0.0/21` CIDR VPC
