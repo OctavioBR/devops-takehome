@@ -1,6 +1,7 @@
 name: Docker image
 on:
-  push: # paths: [ 'src/**', 'Dockerfile' ]
+  push:
+    paths: [ 'src/**', 'Dockerfile', 'helm/**' ]
 jobs:
   build:
     runs-on: ubuntu-latest
