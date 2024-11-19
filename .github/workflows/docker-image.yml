@@ -64,4 +64,4 @@ jobs:
       run: aws eks update-kubeconfig --name $(aws eks list-clusters --query "clusters[?contains(@, 'green')]" --output text | head -n 1)
 
     - name: Deploy Helm chart
-      run: helm upgrade --install devops-takehome ./helm --set image.tag=${{ steps.tag.outputs.value }}
+      run: helm upgrade --namespace hello-world --install --create-namespace --set image.tag=${{ steps.tag.outputs.value }} devops-takehome ./helm
