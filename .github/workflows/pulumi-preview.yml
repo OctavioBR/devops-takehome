@@ -1,5 +1,7 @@
 name: Pulumi
-on: [ pull_request ]
+on:
+  pull_request:
+    paths: [ 'infra/**' ]
 jobs:
   preview:
     name: Pulumi preview
