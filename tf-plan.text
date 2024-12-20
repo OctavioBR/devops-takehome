@@ -1,0 +1,183 @@
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # module.auth0.auth0_action.add-custom-claims-to-m2m-tokens has been deleted
+  - resource "auth0_action" "add-custom-claims-to-m2m-tokens" {
+      - id         = "6124be41-7913-4fec-9934-923ce7fb6147" -> null
+        name       = "Add Custom Claims to M2M Tokens"
+        # (4 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # aws_iam_policy.datadog_iam_policy will be updated in-place
+  ~ resource "aws_iam_policy" "datadog_iam_policy" {
+        id               = "arn:aws:iam::992382778380:policy/DatadogIAMPolicy"
+        name             = "DatadogIAMPolicy"
+      ~ policy           = jsonencode(
+          ~ {
+              ~ Statement = [
+                  ~ {
+                      ~ Action   = [
+                            # (2 unchanged elements hidden)
+                            "backup:List*",
+                          + "backup:ListRecoveryPointsByBackupVault",
+                            "bcm-data-exports:GetExport",
+                            # (96 unchanged elements hidden)
+                        ]
+                        # (2 unchanged attributes hidden)
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            }
+        )
+        tags             = {}
+        # (7 unchanged attributes hidden)
+    }
+
+  # datadog_integration_aws.sandbox will be updated in-place
+  ~ resource "datadog_integration_aws" "sandbox" {
+      ~ host_tags                            = [
+          - "aws_account:production",
+        ]
+        id                                   = "992382778380:DatadogAWSIntegrationRole"
+        # (11 unchanged attributes hidden)
+    }
+
+  # module.auth0.auth0_action.add-custom-claims-to-m2m-tokens will be created
+  + resource "auth0_action" "add-custom-claims-to-m2m-tokens" {
+      + code       = <<-EOT
+            /**
+            * Handler that will be called during the execution of a Client Credentials exchange.
+            *
+            * @param {Event} event - Details about client credentials grant request.
+            * @param {CredentialsExchangeAPI} api - Interface whose methods can be used to change the behavior of client credentials grant.
+            */
+            exports.onExecuteCredentialsExchange = async (event, api) => {
+              var orgNameClaimKey = "greprclaim/orgName";
+              await addCustomClaim(orgNameClaimKey, event, api);
+            };
+            
+            /**
+            * Adds a custom claim to the access token
+            *
+            * @param {string} claimKey - The key for the claim
+            * @param {Event} event - Details about the client
+            * @param {CredentialsExchangeAPI} api - Interface whose methods can be used to change the behavior of client credentials grant.
+            */
+            async function addCustomClaim(claimKey, event, api) {
+              var orgName = event.client.metadata[claimKey];
+              api.accessToken.setCustomClaim(claimKey, orgName)
+            };
+        EOT
+      + deploy     = true
+      + id         = (known after apply)
+      + name       = "Add Custom Claims to M2M Tokens"
+      + runtime    = "node18"
+      + version_id = (known after apply)
+
+      + supported_triggers {
+          + id      = "credentials-exchange"
+          + version = "v2"
+        }
+    }
+
+  # module.auth0.auth0_trigger_action.client_credentials_exchange_trigger_action will be created
+  + resource "auth0_trigger_action" "client_credentials_exchange_trigger_action" {
+      + action_id    = (known after apply)
+      + display_name = (known after apply)
+      + id           = (known after apply)
+      + trigger      = "credentials-exchange"
+    }
+
+  # module.infra.aws_cloudwatch_metric_alarm.cpu_utilization_alarm["eks-demo-20241216185724907000000009-5ec9e86a-8979-771b-3dc2-4719240ced86"] will be created
+  + resource "aws_cloudwatch_metric_alarm" "cpu_utilization_alarm" {
+      + actions_enabled                       = true
+      + alarm_actions                         = [
+          + "arn:aws:sns:us-east-1:992382778380:alarms-topic",
+        ]
+      + alarm_description                     = "Alarm when the CPU utilization is greater than 80% for 4 periods"
+      + alarm_name                            = "eks-cpu-utilization-eks-demo-20241216185724907000000009-5ec9e86a-8979-771b-3dc2-4719240ced86"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanThreshold"
+      + dimensions                            = {
+          + "AutoScalingGroupName" = "eks-demo-20241216185724907000000009-5ec9e86a-8979-771b-3dc2-4719240ced86"
+        }
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 4
+      + id                                    = (known after apply)
+      + metric_name                           = "CPUUtilization"
+      + namespace                             = "AWS/EC2"
+      + period                                = 60
+      + statistic                             = "Average"
+      + tags                                  = {
+          + "Environment" = "prod"
+          + "Terraform"   = "true"
+        }
+      + tags_all                              = {
+          + "Environment" = "prod"
+          + "Terraform"   = "true"
+        }
+      + threshold                             = 80
+      + treat_missing_data                    = "missing"
+    }
+
+  # module.monitoring.aws_guardduty_detector_feature.runtime_monitoring[0] must be replaced
+-/+ resource "aws_guardduty_detector_feature" "runtime_monitoring" {
+      ~ id          = "a7c5e8694ea1487aac116cf52d0dba22/RUNTIME_MONITORING" -> (known after apply)
+        name        = "RUNTIME_MONITORING"
+        # (2 unchanged attributes hidden)
+
+      - additional_configuration { # forces replacement
+          - name   = "EC2_AGENT_MANAGEMENT" -> null # forces replacement
+          - status = "DISABLED" -> null
+        }
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # module.infra.module.eks_auth.kubernetes_config_map_v1_data.aws_auth[0] will be updated in-place
+  ~ resource "kubernetes_config_map_v1_data" "aws_auth" {
+      ~ data          = {
+          ~ "mapRoles"    = <<-EOT
+              - - groups:
+              -   - system:masters
+              -   rolearn: arn:aws:iam::992382778380:role/AWSReservedSSO_AdministratorAccess_03b5eba87f292ec9
+              -   username: cluster-admin
+              - - groups:
+              -   - system:bootstrappers
+              -   - system:nodes
+              -   rolearn: arn:aws:iam::992382778380:role/demo-eks-node-group-20241216185717285000000001
+              -   username: system:node:{{EC2PrivateDNSName}}
+              + - "groups":
+              +   - "system:masters"
+              +   "rolearn": "arn:aws:iam::992382778380:role/AWSReservedSSO_AdministratorAccess_03b5eba87f292ec9"
+              +   "username": "cluster-admin"
+            EOT
+            # (2 unchanged elements hidden)
+        }
+        id            = "kube-system/aws-auth"
+        # (2 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+Plan: 4 to add, 3 to change, 1 to destroy.
